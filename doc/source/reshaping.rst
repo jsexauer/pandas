@@ -285,7 +285,7 @@ We can produce pivot tables from this data very easily:
 
    pivot_table(df, values='D', index=['A', 'B'], columns=['C'])
    pivot_table(df, values='D', index=['B'], columns=['A', 'C'], aggfunc=np.sum)
-   pivot_table(df, values=['D','E'], rows=['B'], columns=['A', 'C'], aggfunc=np.sum)
+   pivot_table(df, values=['D','E'], index=['B'], columns=['A', 'C'], aggfunc=np.sum)
 
 The result object is a DataFrame having potentially hierarchical indexes on the
 rows and columns. If the ``values`` column name is not given, the pivot table
@@ -294,14 +294,14 @@ hierarchy in the columns:
 
 .. ipython:: python
 
-   pivot_table(df, rows=['A', 'B'], columns=['C'])
+   pivot_table(df, index=['A', 'B'], columns=['C'])
 
 You can render a nice output of the table omitting the missing values by
 calling ``to_string`` if you wish:
 
 .. ipython:: python
 
-   table = pivot_table(df, rows=['A', 'B'], columns=['C'])
+   table = pivot_table(df, index=['A', 'B'], columns=['C'])
    print(table.to_string(na_rep=''))
 
 Note that ``pivot_table`` is also available as an instance method on DataFrame.
