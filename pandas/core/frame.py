@@ -2483,42 +2483,56 @@ class DataFrame(NDFrame):
         else:
             return self[-duplicated]
 
-    def duplicated(self, cols=None, take_last=False):
+    def duplicated(self, subset=None, take_last=False, **kwargs):
         """
         Return boolean Series denoting duplicate rows, optionally only
         considering certain columns
 
         Parameters
         ----------
-        cols : column label or sequence of labels, optional
+        subset : column label or sequence of labels, optional
             Only consider certain columns for identifying duplicates, by
             default use all of the columns
         take_last : boolean, default False
             Take the last observed row in a row. Defaults to the first row
+        cols : kwargs only argument of subset [deprecated]
 
         Returns
         -------
         duplicated : Series
         """
+        # Parse old-style keyword argument
+        cols = kwargs.pop('cols', None)
+        if cols is not None:
+            warnings.warn("cols is deprecated, use subset", FutureWarning)
+            if subset is None:
+                subset = cols
+            else:
+                msg = "Can only specify either 'cols' or 'subset'"
+                raise TypeError(msg)
+        if len(kwargs) > 0:
+            raise TypeError("Unexpected keyword argument(s): '%s'" %
+                            kwargs.keys())
+
         # kludge for #1833
         def _m8_to_i8(x):
             if issubclass(x.dtype.type, np.datetime64):
                 return x.view(np.int64)
             return x
 
-        if cols is None:
+        if subset is None:
             values = list(_m8_to_i8(self.values.T))
         else:
-            if np.iterable(cols) and not isinstance(cols, compat.string_types):
-                if isinstance(cols, tuple):
-                    if cols in self.columns:
-                        values = [self[cols].values]
+            if np.iterable(subset) and not isinstance(subset, compat.string_types):
+                if isinstance(subset, tuple):
+                    if subset in self.columns:
+                        values = [self[subset].values]
                     else:
-                        values = [_m8_to_i8(self[x].values) for x in cols]
+                        values = [_m8_to_i8(self[x].values) for x in subset]
                 else:
-                    values = [_m8_to_i8(self[x].values) for x in cols]
+                    values = [_m8_to_i8(self[x].values) for x in subset]
             else:
-                values = [self[cols].values]
+                values = [self[subset].values]
 
         keys = lib.fast_zip_fillna(values)
         duplicated = lib.duplicated(keys, take_last=take_last)
