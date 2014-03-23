@@ -2439,27 +2439,42 @@ class DataFrame(NDFrame):
         else:
             return result
 
-    def drop_duplicates(self, cols=None, take_last=False, inplace=False):
+    def drop_duplicates(self, subset=None, take_last=False, inplace=False,
+                        **kwargs):
         """
         Return DataFrame with duplicate rows removed, optionally only
         considering certain columns
 
         Parameters
         ----------
-        cols : column label or sequence of labels, optional
+        subset : column label or sequence of labels, optional
             Only consider certain columns for identifying duplicates, by
             default use all of the columns
         take_last : boolean, default False
             Take the last observed row in a row. Defaults to the first row
         inplace : boolean, default False
             Whether to drop duplicates in place or to return a copy
+        cols : kwargs only argument of subset [deprecated]
 
         Returns
         -------
         deduplicated : DataFrame
         """
 
-        duplicated = self.duplicated(cols, take_last=take_last)
+        # Parse old-style keyword argument
+        cols = kwargs.pop('cols', None)
+        if cols is not None:
+            warnings.warn("cols is deprecated, use subset", FutureWarning)
+            if subset is None:
+                subset = cols
+            else:
+                msg = "Can only specify either 'cols' or 'subset'"
+                raise TypeError(msg)
+        if len(kwargs) > 0:
+            raise TypeError("Unexpected keyword argument(s): '%s'" %
+                            kwargs.keys())
+
+        duplicated = self.duplicated(subset, take_last=take_last)
 
         if inplace:
             inds, = (-duplicated).nonzero()

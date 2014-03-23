@@ -6937,6 +6937,32 @@ class TestDataFrame(tm.TestCase, CheckIndexing,
         expected = df2.drop_duplicates(['AAA', 'B'], take_last=True)
         assert_frame_equal(result, expected)
 
+    def test_drop_duplicates_deprecated_warning(self):
+        df = DataFrame({'AAA': ['foo', 'bar', 'foo', 'bar',
+                                'foo', 'bar', 'bar', 'foo'],
+                        'B': ['one', 'one', 'two', 'two',
+                              'two', 'two', 'one', 'two'],
+                        'C': [1, 1, 2, 2, 2, 2, 1, 2],
+                        'D': lrange(8)})
+        expected = df[:2]
+
+        # Raises warning
+        with tm.assert_produces_warning(False):
+            result = df.drop_duplicates(subset='AAA')
+        assert_frame_equal(result, expected)
+
+        with tm.assert_produces_warning(FutureWarning):
+            result = df.drop_duplicates(cols='AAA')
+        assert_frame_equal(result, expected)
+
+        # Does not allow both subset and cols
+        self.assertRaises(TypeError, df.drop_duplicates,
+                          kwargs={'cols': 'AAA', 'subset': 'B'})
+
+        # Does not allow unknown kwargs
+        self.assertRaises(TypeError, df.drop_duplicates,
+                          kwargs={'cols': 'AAA', 'bad_arg': True})
+
     def test_drop_duplicates_tuple(self):
         df = DataFrame({('AA', 'AB'): ['foo', 'bar', 'foo', 'bar',
                                        'foo', 'bar', 'bar', 'foo'],
