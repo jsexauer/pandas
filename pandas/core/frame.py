@@ -41,7 +41,8 @@ from pandas.compat.scipy import scoreatpercentile as _quantile
 from pandas.compat import(range, zip, lrange, lmap, lzip, StringIO, u,
                           OrderedDict, raise_with_traceback)
 from pandas import compat
-from pandas.util.decorators import deprecate, Appender, Substitution
+from pandas.util.decorators import deprecate, Appender, Substitution, \
+    deprecate_kwarg
 
 from pandas.tseries.period import PeriodIndex
 from pandas.tseries.index import DatetimeIndex
@@ -2463,8 +2464,8 @@ class DataFrame(NDFrame):
         else:
             return result
 
-    def drop_duplicates(self, subset=None, take_last=False, inplace=False,
-                        **kwargs):
+    @deprecate_kwarg(old_arg_name='cols', new_arg_name='subset')
+    def drop_duplicates(self, subset=None, take_last=False, inplace=False):
         """
         Return DataFrame with duplicate rows removed, optionally only
         considering certain columns
@@ -2484,20 +2485,6 @@ class DataFrame(NDFrame):
         -------
         deduplicated : DataFrame
         """
-
-        # Parse old-style keyword argument
-        cols = kwargs.pop('cols', None)
-        if cols is not None:
-            warnings.warn("cols is deprecated, use subset", FutureWarning)
-            if subset is None:
-                subset = cols
-            else:
-                msg = "Can only specify either 'cols' or 'subset'"
-                raise TypeError(msg)
-        if len(kwargs) > 0:
-            raise TypeError("Unexpected keyword argument(s): '%s'" %
-                            kwargs.keys())
-
         duplicated = self.duplicated(subset, take_last=take_last)
 
         if inplace:
@@ -2507,7 +2494,8 @@ class DataFrame(NDFrame):
         else:
             return self[-duplicated]
 
-    def duplicated(self, subset=None, take_last=False, **kwargs):
+    @deprecate_kwarg(old_arg_name='cols', new_arg_name='subset')
+    def duplicated(self, subset=None, take_last=False):
         """
         Return boolean Series denoting duplicate rows, optionally only
         considering certain columns
@@ -2525,19 +2513,6 @@ class DataFrame(NDFrame):
         -------
         duplicated : Series
         """
-        # Parse old-style keyword argument
-        cols = kwargs.pop('cols', None)
-        if cols is not None:
-            warnings.warn("cols is deprecated, use subset", FutureWarning)
-            if subset is None:
-                subset = cols
-            else:
-                msg = "Can only specify either 'cols' or 'subset'"
-                raise TypeError(msg)
-        if len(kwargs) > 0:
-            raise TypeError("Unexpected keyword argument(s): '%s'" %
-                            kwargs.keys())
-
         # kludge for #1833
         def _m8_to_i8(x):
             if issubclass(x.dtype.type, np.datetime64):
