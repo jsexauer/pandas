@@ -1714,27 +1714,6 @@ class TestTimeSeries(tm.TestCase):
         result = tst.duplicated()
         self.assert_((-result).all())
 
-    def test_frame_datetime64_duplicated__deprecated_warning(self):
-        dates = date_range('2010-07-01', end='2010-08-05')
-
-        df = DataFrame({'symbol': 'AAA', 'date': dates})
-        result = df.duplicated(['date', 'symbol'])
-
-        # Raises warning
-        with tm.assert_produces_warning(False):
-            result = df.duplicated(subset='AAA')
-
-        with tm.assert_produces_warning(FutureWarning):
-            result = df.duplicated(cols='AAA')
-
-        # Does not allow both subset and cols
-        self.assertRaises(TypeError, df.duplicated,
-                          kwargs={'cols': 'AAA', 'subset': 'B'})
-
-        # Does not allow unknown kwargs
-        self.assertRaises(TypeError, df.duplicated,
-                          kwargs={'cols': 'AAA', 'bad_arg': True})
-
     def test_timestamp_compare_with_early_datetime(self):
         # e.g. datetime.min
         stamp = Timestamp('2012-01-01')
