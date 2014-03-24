@@ -1068,6 +1068,7 @@ class DataFrame(NDFrame):
 
     to_wide = deprecate('to_wide', to_panel)
 
+    @deprecate_kwarg(old_arg_name='cols', new_arg_name='columns')
     def to_csv(self, path_or_buf=None, sep=",", na_rep='', float_format=None,
                columns=None, header=True, index=True, index_label=None,
                mode='w', nanRep=None, encoding=None, quoting=None,
@@ -1132,17 +1133,6 @@ class DataFrame(NDFrame):
                           FutureWarning)
             na_rep = nanRep
 
-        # Parse old-style keyword argument
-        cols = kwds.pop('cols', None)
-        if cols is not None:
-            warnings.warn("cols is deprecated, use columns", FutureWarning)
-            if columns is None:
-                columns = cols
-            else:
-                msg = "Can only specify either 'columns' or 'cols'"
-                raise TypeError(msg)
-
-
         formatter = fmt.CSVFormatter(self, path_or_buf,
                                      line_terminator=line_terminator,
                                      sep=sep, encoding=encoding,
@@ -1161,10 +1151,11 @@ class DataFrame(NDFrame):
         if path_or_buf is None:
             return formatter.path_or_buf.getvalue()
 
+    @deprecate_kwarg(old_arg_name='cols', new_arg_name='columns')
     def to_excel(self, excel_writer, sheet_name='Sheet1', na_rep='',
                  float_format=None, columns=None, header=True, index=True,
                  index_label=None, startrow=0, startcol=0, engine=None,
-                 merge_cells=True, encoding=None, **kwds):
+                 merge_cells=True, encoding=None):
         """
         Write DataFrame to a excel sheet
 
@@ -1216,16 +1207,6 @@ class DataFrame(NDFrame):
         >>> writer.save()
         """
         from pandas.io.excel import ExcelWriter
-
-        # Parse old-style keyword argument
-        cols = kwds.pop('cols', None)
-        if cols is not None:
-            warnings.warn("cols is deprecated, use columns", FutureWarning)
-            if columns is None:
-                columns = cols
-            else:
-                msg = "Can only specify either 'columns' or 'cols'"
-                raise TypeError(msg)        
         
         need_save = False
         if encoding == None:
