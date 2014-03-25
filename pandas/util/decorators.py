@@ -2,6 +2,7 @@ from pandas.compat import StringIO, callable
 from pandas.lib import cache_readonly
 import sys
 import warnings
+from functools import wraps
 
 
 def deprecate(name, alternative, alt_name=None):
@@ -43,6 +44,7 @@ def deprecate_kwarg(old_arg_name, new_arg_name):
 
     """
     def _deprecate_kwarg(func):
+        @wraps(func)
         def wrapper(*args, **kwargs):
             old_arg_value = kwargs.pop(old_arg_name, None)
             if old_arg_value is not None:
