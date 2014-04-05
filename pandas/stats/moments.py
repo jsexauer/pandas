@@ -305,7 +305,7 @@ def rolling_corr_pairwise(df1, df2=None, window=None, min_periods=None,
 
 
 def _rolling_moment(arg, window, func, minp, axis=0, freq=None, center=False,
-                    args=(), kwargs={}, **kwds):
+                    time_rule=None, args=(), kwargs={}, **kwds):
     """
     Rolling statistical measure using supplied function. Designed to be
     used with passed-in Cython array-based functions.
@@ -322,6 +322,7 @@ def _rolling_moment(arg, window, func, minp, axis=0, freq=None, center=False,
         Frequency to conform to before computing statistic
     center : boolean, default False
         Whether the label should correspond with center of window
+    time_rule : Legacy alias for freq
     args : tuple
         Passed on to func
     kwargs : dict
@@ -331,7 +332,7 @@ def _rolling_moment(arg, window, func, minp, axis=0, freq=None, center=False,
     -------
     y : type of input
     """
-    arg = _conv_timerule(arg, freq)
+    arg = _conv_timerule(arg, freq, time_rule)
     calc = lambda x: func(x, window, minp=minp, args=args, kwargs=kwargs,
                           **kwds)
     return_hook, values = _process_data_structure(arg)
@@ -546,7 +547,13 @@ def _prep_binary(arg1, arg2):
 # Python interface to Cython functions
 
 
-def _conv_timerule(arg, freq):
+def _conv_timerule(arg, freq, time_rule):
+    if time_rule is not None:
+        import warnings
+        warnings.warn("time_rule argument is deprecated, replace with freq",
+                      FutureWarning)
+
+        freq = time_rule
 
     types = (DataFrame, Series)
     if freq is not None and isinstance(arg, types):
@@ -582,7 +589,8 @@ def _rolling_func(func, desc, check_minp=_use_window):
             minp = check_minp(minp, window)
             return func(arg, window, minp, **kwds)
         return _rolling_moment(arg, window, call_cython, min_periods,
-                               freq=freq, center=center, **kwargs)
+                               freq=freq, center=center,
+                               time_rule=time_rule, **kwargs)
 
     return f
 
