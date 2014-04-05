@@ -305,7 +305,7 @@ def rolling_corr_pairwise(df1, df2=None, window=None, min_periods=None,
 
 
 def _rolling_moment(arg, window, func, minp, axis=0, freq=None, center=False,
-                    time_rule=None, args=(), kwargs={}, **kwds):
+                    args=(), kwargs={}, **kwds):
     """
     Rolling statistical measure using supplied function. Designed to be
     used with passed-in Cython array-based functions.
@@ -322,7 +322,6 @@ def _rolling_moment(arg, window, func, minp, axis=0, freq=None, center=False,
         Frequency to conform to before computing statistic
     center : boolean, default False
         Whether the label should correspond with center of window
-    time_rule : Legacy alias for freq
     args : tuple
         Passed on to func
     kwargs : dict
@@ -332,7 +331,7 @@ def _rolling_moment(arg, window, func, minp, axis=0, freq=None, center=False,
     -------
     y : type of input
     """
-    arg = _conv_timerule(arg, freq, time_rule)
+    arg = _conv_timerule(arg, freq)
     calc = lambda x: func(x, window, minp=minp, args=args, kwargs=kwargs,
                           **kwds)
     return_hook, values = _process_data_structure(arg)
