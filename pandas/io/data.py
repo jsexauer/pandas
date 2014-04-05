@@ -363,7 +363,7 @@ def _get_data_from(symbols, start, end, retry_count, pause, adjust_price,
 
 def get_data_yahoo(symbols=None, start=None, end=None, retry_count=3,
                    pause=0.001, adjust_price=False, ret_index=False,
-                   chunksize=25, name=None):
+                   chunksize=25):
     """
     Returns DataFrame/Panel of historical stock prices from symbols, over date
     range, start to end. To avoid being penalized by Yahoo! Finance servers,
@@ -398,12 +398,12 @@ def get_data_yahoo(symbols=None, start=None, end=None, retry_count=3,
     hist_data : DataFrame (str) or Panel (array-like object, DataFrame)
     """
     return _get_data_from(symbols, start, end, retry_count, pause,
-                          adjust_price, ret_index, chunksize, 'yahoo', name)
+                          adjust_price, ret_index, chunksize, 'yahoo')
 
 
 def get_data_google(symbols=None, start=None, end=None, retry_count=3,
                     pause=0.001, adjust_price=False, ret_index=False,
-                    chunksize=25, name=None):
+                    chunksize=25):
     """
     Returns DataFrame/Panel of historical stock prices from symbols, over date
     range, start to end. To avoid being penalized by Google Finance servers,
@@ -432,7 +432,7 @@ def get_data_google(symbols=None, start=None, end=None, retry_count=3,
     hist_data : DataFrame (str) or Panel (array-like object, DataFrame)
     """
     return _get_data_from(symbols, start, end, retry_count, pause,
-                          adjust_price, ret_index, chunksize, 'google', name)
+                          adjust_price, ret_index, chunksize, 'google')
 
 
 _FRED_URL = "http://research.stlouisfed.org/fred2/series/"
