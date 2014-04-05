@@ -338,11 +338,7 @@ _source_functions = {'google': _get_hist_google, 'yahoo': _get_hist_yahoo}
 
 
 def _get_data_from(symbols, start, end, retry_count, pause, adjust_price,
-                   ret_index, chunksize, source, name):
-    if name is not None:
-        warnings.warn("Arg 'name' is deprecated, please use 'symbols' "
-                      "instead.", FutureWarning)
-        symbols = name
+                   ret_index, chunksize, source):
 
     src_fn = _source_functions[source]
 

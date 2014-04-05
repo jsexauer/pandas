@@ -547,13 +547,7 @@ def _prep_binary(arg1, arg2):
 # Python interface to Cython functions
 
 
-def _conv_timerule(arg, freq, time_rule):
-    if time_rule is not None:
-        import warnings
-        warnings.warn("time_rule argument is deprecated, replace with freq",
-                      FutureWarning)
-
-        freq = time_rule
+def _conv_timerule(arg, freq):
 
     types = (DataFrame, Series)
     if freq is not None and isinstance(arg, types):
