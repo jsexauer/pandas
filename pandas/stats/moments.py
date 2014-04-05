@@ -582,8 +582,7 @@ def _rolling_func(func, desc, check_minp=_use_window):
             minp = check_minp(minp, window)
             return func(arg, window, minp, **kwds)
         return _rolling_moment(arg, window, call_cython, min_periods,
-                               freq=freq, center=center,
-                               time_rule=time_rule, **kwargs)
+                               freq=freq, center=center, **kwargs)
 
     return f
 
