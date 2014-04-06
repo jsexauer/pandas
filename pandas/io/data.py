@@ -365,7 +365,7 @@ def _get_data_from(symbols, start, end, retry_count, pause, adjust_price,
     return hist_data
 
 
-def get_data_yahoo(symbols=None, start=None, end=None, retry_count=3,
+def get_data_yahoo(symbols=None, start='1/1/2010', end=None, retry_count=3,
                    pause=0.001, adjust_price=False, ret_index=False,
                    chunksize=25, name=None):
     """
@@ -378,7 +378,7 @@ def get_data_yahoo(symbols=None, start=None, end=None, retry_count=3,
     symbols : string, array-like object (list, tuple, Series), or DataFrame
         Single stock symbol (ticker), array-like object of symbols or
         DataFrame with index containing stock symbols.
-    start : string, (defaults to '1/1/2010')
+    start : string, date-like object, (defaults to '1/1/2010')
         Starting date, timestamp. Parses many different kind of date
         representations (e.g., 'JAN-01-2010', '1/1/10', 'Jan, 1, 1980')
     end : string, (defaults to today)
@@ -405,7 +405,7 @@ def get_data_yahoo(symbols=None, start=None, end=None, retry_count=3,
                           adjust_price, ret_index, chunksize, 'yahoo', name)
 
 
-def get_data_google(symbols=None, start=None, end=None, retry_count=3,
+def get_data_google(symbols=None, start='1/1/2010', end=None, retry_count=3,
                     pause=0.001, adjust_price=False, ret_index=False,
                     chunksize=25, name=None):
     """
@@ -418,7 +418,7 @@ def get_data_google(symbols=None, start=None, end=None, retry_count=3,
     symbols : string, array-like object (list, tuple, Series), or DataFrame
         Single stock symbol (ticker), array-like object of symbols or
         DataFrame with index containing stock symbols.
-    start : string, (defaults to '1/1/2010')
+    start : string, date-like object (defaults to '1/1/2010')
         Starting date, timestamp. Parses many different kind of date
         representations (e.g., 'JAN-01-2010', '1/1/10', 'Jan, 1, 1980')
     end : string, (defaults to today)

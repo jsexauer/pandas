@@ -188,14 +188,22 @@ class TestYahoo(tm.TestCase):
     def test_get_data_single_symbol(self):
         #single symbol
         #http://finance.yahoo.com/q/hp?s=GOOG&a=09&b=08&c=2010&d=09&e=10&f=2010&g=d
-        # just test that we succeed
-        web.get_data_yahoo('GOOG')
+        df = web.get_data_yahoo('GOOG')
+        self.assertEqual(df.Volume.ix['OCT-08-2010'], 2859200)
 
     @network
     def test_get_data_multiple_symbols(self):
-        # just test that we succeed
         sl = ['AAPL', 'AMZN', 'GOOG']
-        web.get_data_yahoo(sl, '2012')
+        pan = web.get_data_yahoo(sl, '2012')
+
+        def testit():
+            ts = pan.Close.GOOG.index[pan.Close.AAPL > pan.Close.GOOG]
+            self.assertEquals(ts[0].dayofyear, 96)
+
+        if hasattr(pan.Close, 'GOOG') and hasattr(pan.Close, 'AAPL'):
+            testit()
+        else:
+            self.assertRaises(AttributeError, testit)
 
     @network
     def test_get_data_multiple_symbols_two_dates(self):
