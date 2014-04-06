@@ -283,14 +283,6 @@ class TestLegacyCompat(unittest.TestCase):
         self.assertRaises(Exception, inferTimeRule, index1[:2])
         self.assertRaises(Exception, inferTimeRule, index3)
 
-    def test_time_rule(self):
-        result = DatetimeIndex('1/1/2000', '1/30/2000', time_rule='WEEKDAY')
-        result2 = DatetimeIndex('1/1/2000', '1/30/2000', timeRule='WEEKDAY')
-        expected = date_range('1/1/2000', '1/30/2000', freq='B')
-
-        self.assert_(result.equals(expected))
-        self.assert_(result2.equals(expected))
-
     def tearDown(self):
         sys.stderr = sys.__stderr__
 
