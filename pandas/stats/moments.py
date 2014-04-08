@@ -57,6 +57,7 @@ freq : string or DateOffset object, optional (default None)
     as a frequency string or DateOffset object.
 center : boolean, default False
     Set the labels at the center of the window.
+how : string, method for down- or re-sampling, default to %s
 """
 
 _roll_notes = r"""
@@ -85,6 +86,7 @@ freq : None or string alias / date offset object, default=None
 adjust : boolean, default True
     Divide by decaying adjustment factor in beginning periods to account for
     imbalance in relative weightings (viewing EWMA as a moving average)
+how : string, method for down- or re-sampling, default to 'mean'
 """
 
 _ewm_notes = """
@@ -148,7 +150,7 @@ _bias_kw = r"""bias : boolean, default False
 """
 
 
-def rolling_count(arg, window, freq=None, center=False):
+def rolling_count(arg, window, freq=None, center=False, how=None):
     """
     Rolling count of number of non-NaN observations inside provided window.
 
@@ -163,6 +165,7 @@ def rolling_count(arg, window, freq=None, center=False):
         as a frequency string or DateOffset object.
     center : boolean, default False
         Whether the label should correspond with center of window
+    how : string, method for down- or re-sampling, default to 'mean'
 
     Returns
     -------
@@ -174,7 +177,7 @@ def rolling_count(arg, window, freq=None, center=False):
     frequency by resampling the data. This is done with the default parameters
     of :meth:`~pandas.Series.resample` (i.e. using the `mean`).
     """
-    arg = _conv_timerule(arg, freq)
+    arg = _conv_timerule(arg, freq, how)
     window = min(window, len(arg))
 
     return_hook, values = _process_data_structure(arg, kill_inf=False)
@@ -190,10 +193,10 @@ def rolling_count(arg, window, freq=None, center=False):
 
 
 @Substitution("Unbiased moving covariance.", _binary_arg_flex,
-              _roll_kw+_pairwise_kw, _flex_retval, _roll_notes)
+              _roll_kw%'None'+_pairwise_kw, _flex_retval, _roll_notes)
 @Appender(_doc_template)
 def rolling_cov(arg1, arg2=None, window=None, min_periods=None, freq=None,
-                center=False, pairwise=None):
+                center=False, pairwise=None, how=None):
     if window is None and isinstance(arg2, (int, float)):
         window = arg2
         arg2 = arg1
@@ -201,8 +204,8 @@ def rolling_cov(arg1, arg2=None, window=None, min_periods=None, freq=None,
     elif arg2 is None:
         arg2 = arg1
         pairwise = True if pairwise is None else pairwise  # only default unset
-    arg1 = _conv_timerule(arg1, freq)
-    arg2 = _conv_timerule(arg2, freq)
+    arg1 = _conv_timerule(arg1, freq, how)
+    arg2 = _conv_timerule(arg2, freq, how)
     window = min(window, len(arg1), len(arg2))
 
     def _get_cov(X, Y):
@@ -215,10 +218,10 @@ def rolling_cov(arg1, arg2=None, window=None, min_periods=None, freq=None,
 
 
 @Substitution("Moving sample correlation.", _binary_arg_flex,
-              _roll_kw+_pairwise_kw, _flex_retval, _roll_notes)
+              _roll_kw%'None'+_pairwise_kw, _flex_retval, _roll_notes)
 @Appender(_doc_template)
 def rolling_corr(arg1, arg2=None, window=None, min_periods=None, freq=None,
-                 center=False, pairwise=None):
+                 center=False, pairwise=None, how=None):
     if window is None and isinstance(arg2, (int, float)):
         window = arg2
         arg2 = arg1
@@ -226,8 +229,8 @@ def rolling_corr(arg1, arg2=None, window=None, min_periods=None, freq=None,
     elif arg2 is None:
         arg2 = arg1
         pairwise = True if pairwise is None else pairwise  # only default unset
-    arg1 = _conv_timerule(arg1, freq)
-    arg2 = _conv_timerule(arg2, freq)
+    arg1 = _conv_timerule(arg1, freq, how)
+    arg2 = _conv_timerule(arg2, freq, how)
     window = min(window, len(arg1), len(arg2))
 
     def _get_corr(a, b):
@@ -289,7 +292,7 @@ def _flex_binary_moment(arg1, arg2, f, pairwise=False):
 
 @Substitution("Deprecated. Use rolling_corr(..., pairwise=True) instead.\n\n"
               "Pairwise moving sample correlation", _pairwise_arg,
-              _roll_kw, _pairwise_retval, _roll_notes)
+              _roll_kw%'None', _pairwise_retval, _roll_notes)
 @Appender(_doc_template)
 def rolling_corr_pairwise(df1, df2=None, window=None, min_periods=None,
                           freq=None, center=False):
@@ -301,7 +304,7 @@ def rolling_corr_pairwise(df1, df2=None, window=None, min_periods=None,
 
 
 def _rolling_moment(arg, window, func, minp, axis=0, freq=None, center=False,
-                    args=(), kwargs={}, **kwds):
+                    how=None, args=(), kwargs={}, **kwds):
     """
     Rolling statistical measure using supplied function. Designed to be
     used with passed-in Cython array-based functions.
@@ -318,6 +321,7 @@ def _rolling_moment(arg, window, func, minp, axis=0, freq=None, center=False,
         Frequency to conform to before computing statistic
     center : boolean, default False
         Whether the label should correspond with center of window
+    how : string, method for down- or re-sampling, default to 'mean'
     args : tuple
         Passed on to func
     kwargs : dict
@@ -327,7 +331,7 @@ def _rolling_moment(arg, window, func, minp, axis=0, freq=None, center=False,
     -------
     y : type of input
     """
-    arg = _conv_timerule(arg, freq)
+    arg = _conv_timerule(arg, freq, how)
     calc = lambda x: func(x, window, minp=minp, args=args, kwargs=kwargs,
                           **kwds)
     return_hook, values = _process_data_structure(arg)
@@ -413,9 +417,9 @@ def _get_center_of_mass(com, span, halflife):
               _type_of_input_retval, _ewm_notes)
 @Appender(_doc_template)
 def ewma(arg, com=None, span=None, halflife=None, min_periods=0, freq=None,
-         adjust=True):
+         adjust=True, how=None):
     com = _get_center_of_mass(com, span, halflife)
-    arg = _conv_timerule(arg, freq)
+    arg = _conv_timerule(arg, freq, how)
 
     def _ewma(v):
         result = algos.ewma(v, com, int(adjust))
@@ -437,9 +441,9 @@ def _first_valid_index(arr):
               _ewm_kw+_bias_kw, _type_of_input_retval, _ewm_notes)
 @Appender(_doc_template)
 def ewmvar(arg, com=None, span=None, halflife=None, min_periods=0, bias=False,
-           freq=None):
+           freq=None, how=None):
     com = _get_center_of_mass(com, span, halflife)
-    arg = _conv_timerule(arg, freq)
+    arg = _conv_timerule(arg, freq, how)
     moment2nd = ewma(arg * arg, com=com, min_periods=min_periods)
     moment1st = ewma(arg, com=com, min_periods=min_periods)
 
@@ -465,7 +469,7 @@ ewmvol = ewmstd
               _ewm_kw+_pairwise_kw, _type_of_input_retval, _ewm_notes)
 @Appender(_doc_template)
 def ewmcov(arg1, arg2=None, com=None, span=None, halflife=None, min_periods=0,
-           bias=False, freq=None, pairwise=None):
+           bias=False, freq=None, pairwise=None, how=None):
     if arg2 is None:
         arg2 = arg1
         pairwise = True if pairwise is None else pairwise
@@ -473,8 +477,8 @@ def ewmcov(arg1, arg2=None, com=None, span=None, halflife=None, min_periods=0,
         com = arg2
         arg2 = arg1
         pairwise = True if pairwise is None else pairwise
-    arg1 = _conv_timerule(arg1, freq)
-    arg2 = _conv_timerule(arg2, freq)
+    arg1 = _conv_timerule(arg1, freq, how)
+    arg2 = _conv_timerule(arg2, freq, how)
 
     def _get_ewmcov(X, Y):
         mean = lambda x: ewma(x, com=com, span=span, halflife=halflife, min_periods=min_periods)
@@ -492,7 +496,7 @@ def ewmcov(arg1, arg2=None, com=None, span=None, halflife=None, min_periods=0,
               _ewm_kw+_pairwise_kw, _type_of_input_retval, _ewm_notes)
 @Appender(_doc_template)
 def ewmcorr(arg1, arg2=None, com=None, span=None, halflife=None, min_periods=0,
-            freq=None, pairwise=None):
+            freq=None, pairwise=None, how=None):
     if arg2 is None:
         arg2 = arg1
         pairwise = True if pairwise is None else pairwise
@@ -500,8 +504,8 @@ def ewmcorr(arg1, arg2=None, com=None, span=None, halflife=None, min_periods=0,
         com = arg2
         arg2 = arg1
         pairwise = True if pairwise is None else pairwise
-    arg1 = _conv_timerule(arg1, freq)
-    arg2 = _conv_timerule(arg2, freq)
+    arg1 = _conv_timerule(arg1, freq, how)
+    arg2 = _conv_timerule(arg2, freq, how)
 
     def _get_ewmcorr(X, Y):
         mean = lambda x: ewma(x, com=com, span=span, halflife=halflife, min_periods=min_periods)
@@ -541,12 +545,12 @@ def _prep_binary(arg1, arg2):
 # Python interface to Cython functions
 
 
-def _conv_timerule(arg, freq):
+def _conv_timerule(arg, freq, how):
 
     types = (DataFrame, Series)
     if freq is not None and isinstance(arg, types):
         # Conform to whatever frequency needed.
-        arg = arg.resample(freq)
+        arg = arg.resample(freq, how=how)
 
     return arg
 
@@ -567,8 +571,14 @@ def _use_window(minp, window):
         return minp
 
 
-def _rolling_func(func, desc, check_minp=_use_window):
-    @Substitution(desc, _unary_arg, _roll_kw, _type_of_input_retval, _roll_notes)
+def _rolling_func(func, desc, check_minp=_use_window, how=None):
+    if how is None:
+        how_arg_str = 'None'
+    else:
+        how_arg_str = "'%s"%how
+
+    @Substitution(desc, _unary_arg, _roll_kw%how_arg_str, _type_of_input_retval,
+                  _roll_notes)
     @Appender(_doc_template)
     @wraps(func)
     def f(arg, window, min_periods=None, freq=None, center=False,
@@ -577,12 +587,12 @@ def _rolling_func(func, desc, check_minp=_use_window):
             minp = check_minp(minp, window)
             return func(arg, window, minp, **kwds)
         return _rolling_moment(arg, window, call_cython, min_periods, freq=freq,
-                               center=center, **kwargs)
+                               center=center, how=None **kwargs)
 
     return f
 
-rolling_max = _rolling_func(algos.roll_max2, 'Moving maximum.')
-rolling_min = _rolling_func(algos.roll_min2, 'Moving minimum.')
+rolling_max = _rolling_func(algos.roll_max2, 'Moving maximum.', how='max')
+rolling_min = _rolling_func(algos.roll_min2, 'Moving minimum.', how='min')
 rolling_sum = _rolling_func(algos.roll_sum, 'Moving sum.')
 rolling_mean = _rolling_func(algos.roll_mean, 'Moving mean.')
 rolling_median = _rolling_func(algos.roll_median_cython, 'Moving median.')
@@ -687,7 +697,7 @@ def rolling_apply(arg, window, func, min_periods=None, freq=None,
 
 def rolling_window(arg, window=None, win_type=None, min_periods=None,
                    freq=None, center=False, mean=True,
-                   axis=0, **kwargs):
+                   axis=0, how=None, **kwargs):
     """
     Applies a moving window of type ``window_type`` and size ``window``
     on the data.
@@ -711,6 +721,7 @@ def rolling_window(arg, window=None, win_type=None, min_periods=None,
     mean : boolean, default True
         If True computes weighted mean, else weighted sum
     axis : {0, 1}, default 0
+    how : string, method for down- or re-sampling, default to 'mean'
 
     Returns
     -------
@@ -761,7 +772,7 @@ def rolling_window(arg, window=None, win_type=None, min_periods=None,
 
     minp = _use_window(min_periods, len(window))
 
-    arg = _conv_timerule(arg, freq)
+    arg = _conv_timerule(arg, freq, how)
     return_hook, values = _process_data_structure(arg)
 
     f = lambda x: algos.roll_window(x, window, minp, avg=mean)
