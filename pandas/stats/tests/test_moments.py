@@ -848,6 +848,27 @@ class TestMoments(tm.TestCase):
                                       preserve_nan=preserve_nan)
         self._check_expanding_structures(func)
 
+    def test_rolling_max_gh6297(self):
+        """Replicate result expected by sleibman in GH #6297"""
+
+        indices = [datetime.datetime(1975, 1, i, 12, 0) for i in range(1, 6)]
+        # So that we can have 2 datapoints on one of the days
+        indices.append(datetime.datetime(1975, 1, 3, 6, 0))
+        series = Series(range(1, 7), index=indices)
+        # Use floats instead of ints as values
+        series = series.map(lambda x: float(x))
+        # Sort chronologically
+        series = series.sort_index()
+
+        expected = Series([1.0, 2.0, 6.0, 4.0, 5.0],
+                          index=[datetime.datetime(1975, 1, i, 12, 0)
+                                 for i in range(1, 6)])
+        x = mom.rolling_max(series, window=1, freq='D')
+        assert_series_equal(expected, x)
+
+
+
+
 if __name__ == '__main__':
     import nose
     nose.runmodule(argv=[__file__, '-vvs', '-x', '--pdb', '--pdb-failure'],
