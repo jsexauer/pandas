@@ -849,7 +849,7 @@ class TestMoments(tm.TestCase):
         self._check_expanding_structures(func)
 
     def test_rolling_max_gh6297(self):
-        """Replicate result expected by sleibman in GH #6297"""
+        """Replicate result expected in GH #6297"""
 
         indices = [datetime(1975, 1, i, 12, 0) for i in range(1, 6)]
         # So that we can have 2 datapoints on one of the days
@@ -861,7 +861,7 @@ class TestMoments(tm.TestCase):
         series = series.sort_index()
 
         expected = Series([1.0, 2.0, 6.0, 4.0, 5.0],
-                          index=[datetime(1975, 1, i, 12, 0)
+                          index=[datetime(1975, 1, i, 0)
                                  for i in range(1, 6)])
         x = mom.rolling_max(series, window=1, freq='D')
         assert_series_equal(expected, x)
