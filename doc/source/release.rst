@@ -253,6 +253,8 @@ Improvements to existing features
 - Performance improvement for ``DataFrame.from_records`` when reading a
   specified number of rows from an iterable (:issue:`6700`)
 - :ref:`Holidays and holiday calendars<timeseries.holiday>` are now available and can be used with CustomBusinessDay (:issue:`6719`)
+- Added ``how`` option to rolling-moment functions to dictate how to handle resampling; :func:``rolling_max`` defaults to max,
+  :func:``rolling_min`` defaults to min, and all others default to mean (:issue:`6297`)
 
 .. _release.bug_fixes-0.14.0:
 

@@ -441,7 +441,9 @@ Enhancements
   file. (:issue:`6545`)
 - ``pandas.io.gbq`` now handles reading unicode strings properly. (:issue:`5940`)
 - :ref:`Holidays Calendars<timeseries.holiday>` are now available and can be used with CustomBusinessDay (:issue:`6719`)
-
+- Added ``how`` option to rolling-moment functions to dictate how to handle resampling; :func:``rolling_max`` defaults to max,
+  :func:``rolling_min`` defaults to min, and all others default to mean (:issue:`6297`)
+  
 Performance
 ~~~~~~~~~~~
 
