@@ -595,7 +595,8 @@ rolling_max = _rolling_func(algos.roll_max2, 'Moving maximum.', how='max')
 rolling_min = _rolling_func(algos.roll_min2, 'Moving minimum.', how='min')
 rolling_sum = _rolling_func(algos.roll_sum, 'Moving sum.')
 rolling_mean = _rolling_func(algos.roll_mean, 'Moving mean.')
-rolling_median = _rolling_func(algos.roll_median_cython, 'Moving median.')
+rolling_median = _rolling_func(algos.roll_median_cython, 'Moving median.',
+                               how='median')
 
 _ts_std = lambda *a, **kw: _zsqrt(algos.roll_var(*a, **kw))
 rolling_std = _rolling_func(_ts_std, 'Unbiased moving standard deviation.',
