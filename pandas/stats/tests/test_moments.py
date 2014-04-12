@@ -878,7 +878,7 @@ class TestMoments(tm.TestCase):
         series = series.sort_index()
 
         # Default how should be max
-        expected = Series([1.0, 2.0, 3.0, 4.0, 20.0],
+        expected = Series([0.0, 1.0, 2.0, 3.0, 20.0],
                           index=[datetime(1975, 1, i, 0)
                                  for i in range(1, 6)])
         x = mom.rolling_max(series, window=1, freq='D')
@@ -912,7 +912,7 @@ class TestMoments(tm.TestCase):
         series = series.sort_index()
 
         # Default how should be min
-        expected = Series([1.0, 2.0, 3.0, 4.0, 5.0],
+        expected = Series([0.0, 1.0, 2.0, 3.0, 5.0],
                           index=[datetime(1975, 1, i, 0)
                                  for i in range(1, 6)])
         x = mom.rolling_min(series, window=1, freq='D')
@@ -930,7 +930,7 @@ class TestMoments(tm.TestCase):
         series = series.sort_index()
 
         # Default how should be median
-        expected = Series([1.0, 2.0, 3.0, 4.0, 10],
+        expected = Series([0.0, 1.0, 2.0, 3.0, 10],
                           index=[datetime(1975, 1, i, 0)
                                  for i in range(1, 6)])
         x = mom.rolling_median(series, window=1, freq='D')
