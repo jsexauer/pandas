@@ -892,8 +892,8 @@ class TestMoments(tm.TestCase):
         x = mom.rolling_max(series, window=1, freq='D', how='median')
         assert_series_equal(expected, x)
 
-        # Now specify mean (5+10+20)/3
-        v = (5.0+10.0+20.0)/3.0
+        # Now specify mean (4+10+20)/3
+        v = (4.0+10.0+20.0)/3.0
         expected = Series([0.0, 1.0, 2.0, 3.0, v],
                           index=[datetime(1975, 1, i, 0)
                                  for i in range(1, 6)])
