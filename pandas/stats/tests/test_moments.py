@@ -867,10 +867,11 @@ class TestMoments(tm.TestCase):
         assert_series_equal(expected, x)
 
     def test_rolling_max_how_resample(self):
+
         indices = [datetime(1975, 1, i) for i in range(1, 6)]
         # So that we can have 3 datapoints on last day (5, 10, and 20)
-        indices.append(datetime(1975, 1, 3, 6, 1))
-        indices.append(datetime(1975, 1, 3, 6, 2))
+        indices.append(datetime(1975, 1, 5, 1))
+        indices.append(datetime(1975, 1, 5, 2))
         series = Series(list(range(0, 5)) + [10, 20], index=indices)
         # Use floats instead of ints as values
         series = series.map(lambda x: float(x))
@@ -901,10 +902,11 @@ class TestMoments(tm.TestCase):
 
 
     def test_rolling_min_how_resample(self):
+
         indices = [datetime(1975, 1, i) for i in range(1, 6)]
         # So that we can have 3 datapoints on last day (5, 10, and 20)
-        indices.append(datetime(1975, 1, 3, 6))
-        indices.append(datetime(1975, 1, 3, 6))
+        indices.append(datetime(1975, 1, 5, 1))
+        indices.append(datetime(1975, 1, 5, 2))
         series = Series(list(range(0, 5)) + [10, 20], index=indices)
         # Use floats instead of ints as values
         series = series.map(lambda x: float(x))
@@ -919,10 +921,11 @@ class TestMoments(tm.TestCase):
         assert_series_equal(expected, x)
 
     def test_rolling_median_how_resample(self):
+
         indices = [datetime(1975, 1, i) for i in range(1, 6)]
         # So that we can have 3 datapoints on last day (5, 10, and 20)
-        indices.append(datetime(1975, 1, 3, 6))
-        indices.append(datetime(1975, 1, 3, 6))
+        indices.append(datetime(1975, 1, 5, 1))
+        indices.append(datetime(1975, 1, 5, 2))
         series = Series(list(range(0, 5)) + [10, 20], index=indices)
         # Use floats instead of ints as values
         series = series.map(lambda x: float(x))
