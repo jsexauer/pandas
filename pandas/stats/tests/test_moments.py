@@ -869,7 +869,7 @@ class TestMoments(tm.TestCase):
     def test_rolling_max_how_resample(self):
 
         indices = [datetime(1975, 1, i) for i in range(1, 6)]
-        # So that we can have 3 datapoints on last day (5, 10, and 20)
+        # So that we can have 3 datapoints on last day (4, 10, and 20)
         indices.append(datetime(1975, 1, 5, 1))
         indices.append(datetime(1975, 1, 5, 2))
         series = Series(list(range(0, 5)) + [10, 20], index=indices)
@@ -886,7 +886,7 @@ class TestMoments(tm.TestCase):
         assert_series_equal(expected, x)
 
         # Now specify median (10.0)
-        expected = Series([1.0, 2.0, 3.0, 4.0, 10.0],
+        expected = Series([0.0, 1.0, 2.0, 3.0, 10.0],
                           index=[datetime(1975, 1, i, 0)
                                  for i in range(1, 6)])
         x = mom.rolling_max(series, window=1, freq='D', how='median')
@@ -894,7 +894,7 @@ class TestMoments(tm.TestCase):
 
         # Now specify mean (5+10+20)/3
         v = (5.0+10.0+20.0)/3.0
-        expected = Series([1.0, 2.0, 3.0, 4.0, v],
+        expected = Series([0.0, 1.0, 2.0, 3.0, v],
                           index=[datetime(1975, 1, i, 0)
                                  for i in range(1, 6)])
         x = mom.rolling_max(series, window=1, freq='D', how='mean')
@@ -904,7 +904,7 @@ class TestMoments(tm.TestCase):
     def test_rolling_min_how_resample(self):
 
         indices = [datetime(1975, 1, i) for i in range(1, 6)]
-        # So that we can have 3 datapoints on last day (5, 10, and 20)
+        # So that we can have 3 datapoints on last day (4, 10, and 20)
         indices.append(datetime(1975, 1, 5, 1))
         indices.append(datetime(1975, 1, 5, 2))
         series = Series(list(range(0, 5)) + [10, 20], index=indices)
@@ -914,7 +914,7 @@ class TestMoments(tm.TestCase):
         series = series.sort_index()
 
         # Default how should be min
-        expected = Series([0.0, 1.0, 2.0, 3.0, 5.0],
+        expected = Series([0.0, 1.0, 2.0, 3.0, 4.0],
                           index=[datetime(1975, 1, i, 0)
                                  for i in range(1, 6)])
         x = mom.rolling_min(series, window=1, freq='D')
@@ -923,7 +923,7 @@ class TestMoments(tm.TestCase):
     def test_rolling_median_how_resample(self):
 
         indices = [datetime(1975, 1, i) for i in range(1, 6)]
-        # So that we can have 3 datapoints on last day (5, 10, and 20)
+        # So that we can have 3 datapoints on last day (4, 10, and 20)
         indices.append(datetime(1975, 1, 5, 1))
         indices.append(datetime(1975, 1, 5, 2))
         series = Series(list(range(0, 5)) + [10, 20], index=indices)
