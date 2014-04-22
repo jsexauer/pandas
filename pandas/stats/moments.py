@@ -57,7 +57,8 @@ freq : string or DateOffset object, optional (default None)
     as a frequency string or DateOffset object.
 center : boolean, default False
     Set the labels at the center of the window.
-how : string, method for down- or re-sampling, default to %s
+how : string, default '%s'
+    Method for down- or re-sampling
 """
 
 _roll_notes = r"""
@@ -86,7 +87,8 @@ freq : None or string alias / date offset object, default=None
 adjust : boolean, default True
     Divide by decaying adjustment factor in beginning periods to account for
     imbalance in relative weightings (viewing EWMA as a moving average)
-how : string, method for down- or re-sampling, default to 'mean'
+how : string, default 'mean'
+    Method for down- or re-sampling
 """
 
 _ewm_notes = """
@@ -165,7 +167,8 @@ def rolling_count(arg, window, freq=None, center=False, how=None):
         as a frequency string or DateOffset object.
     center : boolean, default False
         Whether the label should correspond with center of window
-    how : string, method for down- or re-sampling, default to 'mean'
+    how : string, default 'mean'
+        Method for down- or re-sampling
 
     Returns
     -------
@@ -321,7 +324,8 @@ def _rolling_moment(arg, window, func, minp, axis=0, freq=None, center=False,
         Frequency to conform to before computing statistic
     center : boolean, default False
         Whether the label should correspond with center of window
-    how : string, method for down- or re-sampling, default to 'mean'
+    how : string, default 'mean'
+        Method for down- or re-sampling
     args : tuple
         Passed on to func
     kwargs : dict
@@ -722,7 +726,8 @@ def rolling_window(arg, window=None, win_type=None, min_periods=None,
     mean : boolean, default True
         If True computes weighted mean, else weighted sum
     axis : {0, 1}, default 0
-    how : string, method for down- or re-sampling, default to 'mean'
+    how : string, default 'mean'
+        Method for down- or re-sampling
 
     Returns
     -------
