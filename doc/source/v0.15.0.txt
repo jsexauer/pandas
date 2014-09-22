@@ -666,7 +666,13 @@ Finally, the combination of ``TimedeltaIndex`` with ``DatetimeIndex`` allow cert
 Prior Version Deprecations/Changes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are no prior version deprecations that are taking effect as of 0.15.0.
+There are prior version deprecations that are taking effects as of 0.14.0.
+
+- The default ``return_type`` of the ``boxplot`` method has been changed to
+  'axes'.  The previous ``return_type`` can be accessed by specifying 'dict'
+  (:issue:`7096`)
+- Remove ``DataFrame.delevel`` method in favor of ``DataFrame.reset_index``
+  (:issue:`420`)
 
 .. _whatsnew_0150.deprecations:
 
