@@ -413,10 +413,10 @@ In ``boxplot``, the return type can be changed by argument ``return_type``, and 
 
 When ``subplots=False`` / ``by`` is ``None``:
 
-* if ``return_type`` is ``'dict'``, a dictionary containing the :class:`matplotlib Lines <matplotlib.lines.Line2D>` is returned. The keys are "boxes", "caps", "fliers", "medians", and "whiskers".
-   This is the default of ``boxplot`` in historical reason.
-   Note that ``plot(kind='box')`` returns ``Axes`` as default as the same as other plots.
 * if ``return_type`` is ``'axes'``, a :class:`matplotlib Axes <matplotlib.axes.Axes>` containing the boxplot is returned.
+   This is the default of ``boxplot``.
+* if ``return_type`` is ``'dict'``, a dictionary containing the :class:`matplotlib Lines <matplotlib.lines.Line2D>` is returned. The keys are "boxes", "caps", "fliers", "medians", and "whiskers".
+   Note that ``plot(kind='box')`` returns ``Axes`` as default as the same as other plots.
 * if ``return_type`` is ``'both'`` a namedtuple containging the :class:`matplotlib Axes <matplotlib.axes.Axes>`
    and :class:`matplotlib Lines <matplotlib.lines.Line2D>` is returned
 

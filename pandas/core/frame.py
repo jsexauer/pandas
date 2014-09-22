@@ -4911,7 +4911,7 @@ DataFrame.hist = gfx.hist_frame
 
 @Appender(_shared_docs['boxplot'] % _shared_doc_kwargs)
 def boxplot(self, column=None, by=None, ax=None, fontsize=None,
-            rot=0, grid=True, figsize=None, layout=None, return_type=None,
+            rot=0, grid=True, figsize=None, layout=None, return_type='axes',
             **kwds):
     import pandas.tools.plotting as plots
     import matplotlib.pyplot as plt

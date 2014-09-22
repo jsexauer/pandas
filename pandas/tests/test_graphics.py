@@ -1929,10 +1929,9 @@ class TestDataFramePlots(TestPlotBase):
         with tm.assertRaises(ValueError):
             df.boxplot(return_type='NOTATYPE')
 
-        with tm.assert_produces_warning(FutureWarning):
+        with tm.assert_produces_warning(False):
             result = df.boxplot()
-        # change to Axes in future
-        self._check_box_return_type(result, 'dict')
+        self._check_box_return_type(result, 'axes')
 
         with tm.assert_produces_warning(False):
             result = df.boxplot(return_type='dict')

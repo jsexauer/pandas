@@ -2071,11 +2071,11 @@ class PiePlot(MPLPlot):
 class BoxPlot(LinePlot):
     _layout_type = 'horizontal'
 
-    _valid_return_types = (None, 'axes', 'dict', 'both')
+    _valid_return_types = ('axes', 'dict', 'both')
     # namedtuple to hold results
     BP = namedtuple("Boxplot", ['ax', 'lines'])
 
-    def __init__(self, data, return_type=None, **kwargs):
+    def __init__(self, data, return_type='axes', **kwargs):
         # Do not call LinePlot.__init__ which may fill nan
         if return_type not in self._valid_return_types:
             raise ValueError("return_type must be {None, 'axes', 'dict', 'both'}")
@@ -2210,10 +2210,7 @@ class BoxPlot(LinePlot):
 
     @property
     def result(self):
-        if self.return_type is None:
-            return super(BoxPlot, self).result
-        else:
-            return self._return_obj
+        return self._return_obj
 
 
 # kinds supported by both dataframe and series
@@ -2528,7 +2525,7 @@ _shared_docs['boxplot'] = """
     grid : Setting this to True will show the grid
     layout : tuple (optional)
         (rows, columns) for the layout of the plot
-    return_type : {'axes', 'dict', 'both'}, default 'dict'
+    return_type : {'axes', 'dict', 'both'}, default 'axes'
         The kind of object to return. 'dict' returns a dictionary
         whose values are the matplotlib Lines of the boxplot;
         'axes' returns the matplotlib axes the boxplot is drawn on;
@@ -2556,13 +2553,12 @@ _shared_docs['boxplot'] = """
 
 @Appender(_shared_docs['boxplot'] % _shared_doc_kwargs)
 def boxplot(data, column=None, by=None, ax=None, fontsize=None,
-            rot=0, grid=True, figsize=None, layout=None, return_type=None,
+            rot=0, grid=True, figsize=None, layout=None, return_type='axes',
             **kwds):
 
     # validate return_type:
-    valid_types = (None, 'axes', 'dict', 'both')
     if return_type not in BoxPlot._valid_return_types:
-        raise ValueError("return_type must be {None, 'axes', 'dict', 'both'}")
+        raise ValueError("return_type must be {'axes', 'dict', 'both'}")
 
     from pandas import Series, DataFrame
     if isinstance(data, Series):
@@ -2594,7 +2590,7 @@ def boxplot(data, column=None, by=None, ax=None, fontsize=None,
             return bp
         elif return_type == 'both':
             return BoxPlot.BP(ax=ax, lines=bp)
-        else:
+        elif return_type == 'axes':
             return ax
 
     colors = _get_colors()
@@ -2615,14 +2611,6 @@ def boxplot(data, column=None, by=None, ax=None, fontsize=None,
             raise ValueError("The 'layout' keyword is not supported when "
                              "'by' is None")
 
-        if return_type is None:
-            msg = ("\nThe default value for 'return_type' will change to "
-                   "'axes' in a future release.\n To use the future behavior "
-                   "now, set return_type='axes'.\n To keep the previous "
-                   "behavior and silence this warning, set "
-                   "return_type='dict'.")
-            warnings.warn(msg, FutureWarning)
-            return_type = 'dict'
         if ax is None:
             ax = _gca()
         data = data._get_numeric_data()

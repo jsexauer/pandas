@@ -952,8 +952,8 @@ We can easily visualize this with a boxplot:
    @savefig groupby_boxplot.png
    df.groupby('g').boxplot()
 
-The result of calling ``boxplot`` is a dictionary whose keys are the values
-of our grouping column ``g`` ("A" and "B"). The values of the resulting dictionary
+The result of calling ``boxplot`` is a returns the matplotlib axes the boxplot
+is drawn on. The values of the resulting dictionary
 can be controlled by the ``return_type`` keyword of ``boxplot``.
 See the :ref:`visualization documentation<visualization.box>` for more.
 
