@@ -1793,7 +1793,8 @@ class TestDataFramePlots(TestPlotBase):
         assert_array_equal(ax.xaxis.get_ticklocs(), np.arange(1, len(numeric_cols) + 1))
         self.assertEqual(len(ax.lines), 8 * len(numeric_cols))
 
-        axes = _check_plot_works(df.plot, kind='box', subplots=True, logy=True)
+        axes = _check_plot_works(df.plot, kind='box', subplots=True, logy=True,
+                                 return_type='dict')
         self._check_axes_shape(axes, axes_num=3, layout=(1, 3))
         self._check_ax_scales(axes, yaxis='log')
         for ax, label in zip(axes, labels):
@@ -1822,7 +1823,8 @@ class TestDataFramePlots(TestPlotBase):
         labels = [com.pprint_thing(c) for c in numeric_cols]
 
         # if horizontal, yticklabels are rotated
-        ax = df.plot(kind='box', rot=50, fontsize=8, vert=False)
+        ax = df.plot(kind='box', rot=50, fontsize=8, vert=False,
+                     return_type='dict')
         self._check_ticks_props(ax, xrot=0, yrot=50, ylabelsize=8)
         self._check_text_labels(ax.get_yticklabels(), labels)
         self.assertEqual(len(ax.lines), 8 * len(numeric_cols))
@@ -1863,7 +1865,7 @@ class TestDataFramePlots(TestPlotBase):
         df = self.hist_df
 
         # normal style: return_type=None
-        result = df.plot(kind='box', subplots=True)
+        result = df.plot(kind='box', subplots=True, return_type='dict')
         self.assertIsInstance(result, np.ndarray)
         self._check_box_return_type(result, None,
                                     expected_keys=['height', 'weight', 'category'])
@@ -1956,7 +1958,8 @@ class TestDataFramePlots(TestPlotBase):
         df = self.hist_df.copy()
         df['age'] = np.random.randint(1, 20, df.shape[0])
         # One full row
-        height_ax, weight_ax = df.boxplot(['height', 'weight'], by='category')
+        height_ax, weight_ax = df.boxplot(['height', 'weight'], by='category',
+                                          return_type='dict')
         _check_ax_limits(df['height'], height_ax)
         _check_ax_limits(df['weight'], weight_ax)
         self.assertEqual(weight_ax._sharey, height_ax)
